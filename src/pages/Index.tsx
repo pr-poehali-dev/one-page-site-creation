@@ -8,8 +8,73 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Icon from "@/components/ui/icon";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
 
 const Index = () => {
+  const [contactForm, setContactForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    message: "",
+  });
+
+  const [callbackForm, setCallbackForm] = useState({
+    name: "",
+    phone: "",
+    time: "",
+  });
+
+  const [showPortfolio, setShowPortfolio] = useState(false);
+
+  const handleContactSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Здесь будет логика отправки формы
+    alert(
+      `Спасибо, ${contactForm.name}! Мы свяжемся с вами в ближайшее время.`,
+    );
+    setContactForm({ name: "", email: "", phone: "", message: "" });
+  };
+
+  const handleCallbackSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Здесь будет логика заказа звонка
+    alert(
+      `Спасибо, ${callbackForm.name}! Мы перезвоним вам в указанное время.`,
+    );
+    setCallbackForm({ name: "", phone: "", time: "" });
+  };
+
+  const portfolioItems = [
+    {
+      title: "Интернет-магазин одежды",
+      type: "E-commerce",
+      image: "/placeholder.svg",
+      tech: ["React", "Node.js", "PostgreSQL"],
+    },
+    {
+      title: "Корпоративный портал",
+      type: "Enterprise",
+      image: "/placeholder.svg",
+      tech: ["Vue.js", "Laravel", "MySQL"],
+    },
+    {
+      title: "Стартап приложение",
+      type: "MVP",
+      image: "/placeholder.svg",
+      tech: ["React Native", "Firebase", "TypeScript"],
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       {/* Hero Section */}
@@ -33,17 +98,86 @@ const Index = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Button
-              size="lg"
-              className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-3"
-            >
-              <Icon name="Rocket" className="mr-2" size={20} />
-              Обсудить проект
-            </Button>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button
+                  size="lg"
+                  className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-3"
+                >
+                  <Icon name="Rocket" className="mr-2" size={20} />
+                  Обсудить проект
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Обсудить проект</DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleContactSubmit} className="space-y-4">
+                  <div>
+                    <Label htmlFor="contact-name">Имя *</Label>
+                    <Input
+                      id="contact-name"
+                      value={contactForm.name}
+                      onChange={(e) =>
+                        setContactForm({ ...contactForm, name: e.target.value })
+                      }
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="contact-email">Email *</Label>
+                    <Input
+                      id="contact-email"
+                      type="email"
+                      value={contactForm.email}
+                      onChange={(e) =>
+                        setContactForm({
+                          ...contactForm,
+                          email: e.target.value,
+                        })
+                      }
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="contact-phone">Телефон</Label>
+                    <Input
+                      id="contact-phone"
+                      value={contactForm.phone}
+                      onChange={(e) =>
+                        setContactForm({
+                          ...contactForm,
+                          phone: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="contact-message">Сообщение</Label>
+                    <Textarea
+                      id="contact-message"
+                      value={contactForm.message}
+                      onChange={(e) =>
+                        setContactForm({
+                          ...contactForm,
+                          message: e.target.value,
+                        })
+                      }
+                      placeholder="Расскажите о вашем проекте..."
+                    />
+                  </div>
+                  <Button type="submit" className="w-full">
+                    Отправить сообщение
+                  </Button>
+                </form>
+              </DialogContent>
+            </Dialog>
+
             <Button
               variant="outline"
               size="lg"
               className="text-lg px-8 py-3 border-blue-200 hover:bg-blue-50"
+              onClick={() => setShowPortfolio(!showPortfolio)}
             >
               <Icon name="FileText" className="mr-2" size={20} />
               Посмотреть портфолио
@@ -59,6 +193,58 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Портфолио */}
+      {showPortfolio && (
+        <section className="py-20 px-4 bg-gradient-to-br from-gray-50 to-blue-50 animate-fade-in">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-bold mb-6 text-gray-900">
+                Наши работы
+              </h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                Примеры успешно реализованных проектов для разных типов бизнеса
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              {portfolioItems.map((item, index) => (
+                <Card
+                  key={index}
+                  className="group hover:shadow-xl transition-all duration-300 hover:scale-105"
+                >
+                  <div className="aspect-video bg-gray-100 rounded-t-lg overflow-hidden">
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
+                  </div>
+                  <CardContent className="p-6">
+                    <Badge variant="outline" className="mb-3">
+                      {item.type}
+                    </Badge>
+                    <h3 className="text-xl font-semibold mb-3 text-gray-900">
+                      {item.title}
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {item.tech.map((tech, techIndex) => (
+                        <Badge
+                          key={techIndex}
+                          variant="secondary"
+                          className="text-xs"
+                        >
+                          {tech}
+                        </Badge>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Специализация по клиентам */}
       <section className="py-20 px-4 bg-white">
@@ -303,21 +489,110 @@ const Index = () => {
             учетом бюджета и сроков.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
-              size="lg"
-              className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-3"
-            >
-              <Icon name="MessageCircle" className="mr-2" size={20} />
-              Связаться с нами
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="text-lg px-8 py-3 border-gray-600 text-white hover:bg-gray-800"
-            >
-              <Icon name="Phone" className="mr-2" size={20} />
-              Заказать звонок
-            </Button>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button
+                  size="lg"
+                  className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-3"
+                >
+                  <Icon name="MessageCircle" className="mr-2" size={20} />
+                  Связаться с нами
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Связаться с нами</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-3">
+                    <Icon name="Mail" size={20} className="text-blue-600" />
+                    <span>info@webdev.ru</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Icon name="Phone" size={20} className="text-blue-600" />
+                    <span>+7 (495) 123-45-67</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Icon
+                      name="MessageCircle"
+                      size={20}
+                      className="text-blue-600"
+                    />
+                    <span>Telegram: @webdev_support</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Icon name="Clock" size={20} className="text-blue-600" />
+                    <span>Пн-Пт: 9:00-18:00</span>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
+
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="text-lg px-8 py-3 border-gray-600 text-white hover:bg-gray-800"
+                >
+                  <Icon name="Phone" className="mr-2" size={20} />
+                  Заказать звонок
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Заказать звонок</DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleCallbackSubmit} className="space-y-4">
+                  <div>
+                    <Label htmlFor="callback-name">Имя *</Label>
+                    <Input
+                      id="callback-name"
+                      value={callbackForm.name}
+                      onChange={(e) =>
+                        setCallbackForm({
+                          ...callbackForm,
+                          name: e.target.value,
+                        })
+                      }
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="callback-phone">Телефон *</Label>
+                    <Input
+                      id="callback-phone"
+                      value={callbackForm.phone}
+                      onChange={(e) =>
+                        setCallbackForm({
+                          ...callbackForm,
+                          phone: e.target.value,
+                        })
+                      }
+                      placeholder="+7 (___) ___-__-__"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="callback-time">Удобное время звонка</Label>
+                    <Input
+                      id="callback-time"
+                      value={callbackForm.time}
+                      onChange={(e) =>
+                        setCallbackForm({
+                          ...callbackForm,
+                          time: e.target.value,
+                        })
+                      }
+                      placeholder="Например: завтра в 14:00"
+                    />
+                  </div>
+                  <Button type="submit" className="w-full">
+                    Заказать звонок
+                  </Button>
+                </form>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </section>
